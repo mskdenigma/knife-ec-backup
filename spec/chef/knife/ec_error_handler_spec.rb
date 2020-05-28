@@ -8,7 +8,7 @@ require 'fakefs/spec_helpers'
 
 def net_exception(code)
   s = double("status", :code => code.to_s)
-  Net::HTTPServerException.new("I'm not real!", s)
+  Object.const_defined?('Net::HTTPClientException') ? Net::HTTPClientException : Net::HTTPServerException.new("I'm not real!", s)
 end
 
 def cheffs_filesystem_exception(type)
@@ -47,6 +47,9 @@ describe Chef::Knife::EcErrorHandler do
     end
   end
 
+  
+  httperror = Object.const_defined?('Net::HTTPClientException') ? "Net::HTTPClientException" : "Net::HTTPServerException"
+
   it "#display" do
     @knife_ec_error_handler.add(net_exception(123))
     expect { @knife_ec_error_handler.display }.to output(/
@@ -55,7 +58,7 @@ Error Summary Report
   "timestamp": "1988-04-17 00:00:00 \+0000",
   "message": "I'm not real!",
   "backtrace": null,
-  "exception": "Net::HTTPServerException"
+  "exception": "#{httperror}"
 }
 /).to_stdout
   end
@@ -66,22 +69,22 @@ Error Summary Report
   "timestamp": "1988-04-17 00:00:00 +0000",
   "message": "I'm not real!",
   "backtrace": null,
-  "exception": "Net::HTTPServerException"
+  "exception": "#{httperror}"
 }{
   "timestamp": "1988-04-17 00:00:00 +0000",
   "message": "I'm not real!",
   "backtrace": null,
-  "exception": "Net::HTTPServerException"
+  "exception": "#{httperror}"
 }{
   "timestamp": "1988-04-17 00:00:00 +0000",
   "message": "I'm not real!",
   "backtrace": null,
-  "exception": "Net::HTTPServerException"
+  "exception": "#{httperror}"
 }{
   "timestamp": "1988-04-17 00:00:00 +0000",
   "message": "I'm not real!",
   "backtrace": null,
-  "exception": "Net::HTTPServerException"
+  "exception": "#{httperror}"
 }{
   "timestamp": "1988-04-17 00:00:00 +0000",
   "message": "The reason",

@@ -17,7 +17,7 @@ end
 
 def net_exception(code)
   s = double("status", :code => code.to_s)
-  Net::HTTPServerException.new("I'm not real!", s)
+  Object.const_defined?('Net::HTTPClientException') ? Net::HTTPClientException : Net::HTTPServerException.new("I'm not real!", s)
 end
 
 describe Chef::Knife::EcRestore do

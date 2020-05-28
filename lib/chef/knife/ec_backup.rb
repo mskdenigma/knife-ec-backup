@@ -81,7 +81,7 @@ class Chef
         remote_users.each_pair do |name, url|
           yield name, url
         end
-      rescue Net::HTTPServerException => ex
+      rescue Object.const_defined?('Net::HTTPClientException') ? Net::HTTPClientException : Net::HTTPServerException => ex
         knife_ec_error_handler.add(ex)
       end
 
@@ -91,7 +91,7 @@ class Chef
           ui.msg "Downloading organization object for #{name} from #{url}"
           begin
             org = rest.get(url)
-          rescue Net::HTTPServerException => ex
+          rescue Object.const_defined?('Net::HTTPClientException') ? Net::HTTPClientException : Net::HTTPServerException => ex
             ui.error "Failed to find organization '#{name}'."
             knife_ec_error_handler.add(ex)
             next
@@ -114,7 +114,7 @@ class Chef
         File.open("#{dest_dir}/users/#{username}.json", 'w') do |file|
           file.write(Chef::JSONCompat.to_json_pretty(rest.get(url)))
         end
-      rescue Net::HTTPServerException => ex
+      rescue Object.const_defined?('Net::HTTPClientException') ? Net::HTTPClientException : Net::HTTPServerException => ex
         knife_ec_error_handler.add(ex)
       end
 
@@ -122,7 +122,7 @@ class Chef
         File.open("#{dest_dir}/user_acls/#{username}.json", 'w') do |file|
           file.write(Chef::JSONCompat.to_json_pretty(user_acl_rest.get("users/#{username}/_acl")))
         end
-      rescue Net::HTTPServerException => ex
+      rescue Object.const_defined?('Net::HTTPClientException') ? Net::HTTPClientException : Net::HTTPServerException => ex
         knife_ec_error_handler.add(ex)
       end
 
@@ -154,7 +154,7 @@ class Chef
         File.open("#{dest_dir}/organizations/#{name}/members.json", 'w') do |file|
           file.write(Chef::JSONCompat.to_json_pretty(rest.get("/organizations/#{name}/users")))
         end
-      rescue Net::HTTPServerException => ex
+      rescue Object.const_defined?('Net::HTTPClientException') ? Net::HTTPClientException : Net::HTTPServerException => ex
         knife_ec_error_handler.add(ex)
       end
 
@@ -163,7 +163,7 @@ class Chef
         File.open("#{dest_dir}/organizations/#{name}/invitations.json", 'w') do |file|
           file.write(Chef::JSONCompat.to_json_pretty(rest.get("/organizations/#{name}/association_requests")))
         end
-      rescue Net::HTTPServerException => ex
+      rescue Object.const_defined?('Net::HTTPClientException') ? Net::HTTPClientException : Net::HTTPServerException => ex
         knife_ec_error_handler.add(ex)
       end
 
@@ -248,7 +248,7 @@ class Chef
                                          chef_fs_config.local_fs, nil,
                                          config, ui,
                                          proc { |entry| chef_fs_config.format_path(entry) })
-      rescue Net::HTTPServerException,
+      rescue Object.const_defined?('Net::HTTPClientException') ? Net::HTTPClientException : Net::HTTPServerException,
              Chef::ChefFS::FileSystem::NotFoundError,
              Chef::ChefFS::FileSystem::OperationFailedError => ex
         knife_ec_error_handler.add(ex)

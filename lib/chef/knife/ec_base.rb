@@ -126,7 +126,7 @@ class Chef
           else
             admin_users[0]
           end
-        rescue Net::HTTPServerException => ex
+        rescue Object.const_defined?('Net::HTTPClientException') ? Net::HTTPClientException : Net::HTTPServerException => ex
           knife_ec_error_handler.add(ex)
         end
       end
